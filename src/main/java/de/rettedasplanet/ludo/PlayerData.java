@@ -8,7 +8,7 @@ public class PlayerData {
     private final int colorId;
     private final List<Integer> pieces;
 
-    public PlayerData(String name, int colorId) {
+    public PlayerData(String name, int colorId, Object o) {
         this.name = name;
         this.colorId = colorId;
         this.pieces = new ArrayList<>();
