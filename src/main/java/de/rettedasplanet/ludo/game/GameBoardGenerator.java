@@ -1,4 +1,4 @@
-package de.rettedasplanet.ludo;
+package de.rettedasplanet.ludo.game;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -6,7 +6,6 @@ import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Queue;
 
 public class GameBoardGenerator {
@@ -14,8 +13,14 @@ public class GameBoardGenerator {
     public void generateLudoGameBoardWithAnimation(World world, Runnable onComplete) {
         int baseY = world.getHighestBlockYAt(0, 0) + 1;
 
+        // Spielfeld-Farben
         Material baseMaterial = Material.WHITE_CONCRETE;
+        Material redMaterial = Material.RED_CONCRETE;
+        Material yellowMaterial = Material.YELLOW_CONCRETE;
+        Material greenMaterial = Material.LIME_CONCRETE;
+        Material blackMaterial = Material.BLACK_CONCRETE;
 
+        // Spielfeld-Koordinaten
         Queue<int[]> positionsQueue = new LinkedList<>();
         int[][] boardPositions = {
                 {0, -3}, {1, -3}, {2, -3}, {3, -3}, {3, -2}, {3, -1}, {3, 0}, {3, 1}, {3, 2}, {3, 3},
@@ -33,7 +38,7 @@ public class GameBoardGenerator {
             public void run() {
                 if (positionsQueue.isEmpty()) {
                     cancel();
-                    generateStartFields(world, baseY, Material.RED_CONCRETE, Material.YELLOW_CONCRETE, Material.LIME_CONCRETE, Material.BLACK_CONCRETE);
+                    generateStartFields(world, baseY, redMaterial, yellowMaterial, greenMaterial, blackMaterial);
                     onComplete.run();
                     return;
                 }
@@ -41,7 +46,7 @@ public class GameBoardGenerator {
                 int[] pos = positionsQueue.poll();
                 world.getBlockAt(pos[0], pos[1], pos[2]).setType(baseMaterial);
             }
-        }.runTaskTimer(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("LudoPlugin")), 0, 2); // 2 Ticks Verzögerung
+        }.runTaskTimer(Bukkit.getPluginManager().getPlugin("LudoPlugin"), 0, 2); // 2 Ticks Verzögerung
     }
 
     private void generateStartFields(World world, int baseY, Material red, Material yellow, Material green, Material black) {

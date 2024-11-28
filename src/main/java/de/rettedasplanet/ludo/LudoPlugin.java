@@ -1,28 +1,40 @@
-
 package de.rettedasplanet.ludo;
 
+import de.rettedasplanet.ludo.commands.LudoCommand;
+import de.rettedasplanet.ludo.game.GameBoardGenerator;
+import de.rettedasplanet.ludo.game.GameState;
+import de.rettedasplanet.ludo.listeners.DiceListener;
+import de.rettedasplanet.ludo.utils.MessageManager;
+import de.rettedasplanet.ludo.utils.VoidWorldGenerator;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class LudoPlugin extends JavaPlugin {
 
-    private GameBoardGenerator gameBoardGenerator; // Spielfeld-Generator
-    private World gameWorld; // Die aktuell genutzte Spielwelt
-    private final List<String> playersInLobby = new ArrayList<>(); // Spieler in der Lobby
+    private MessageManager messageManager;
+    private World gameWorld;
+    private final Map<UUID, PlayerData> playersInGame = new HashMap<>();
+    private GameState gameState;
 
     @Override
     public void onEnable() {
         getLogger().info("LudoPlugin aktiviert!");
 
-        // Initialisiere den Spielfeld-Generator
-        gameBoardGenerator = new GameBoardGenerator();
+        // Nachrichten-Manager initialisieren
+        messageManager = new MessageManager(getDataFolder());
 
-        // Registriere den Hauptbefehl /ludo
+        // Befehle und Listener registrieren
         getCommand("ludo").setExecutor(new LudoCommand(this));
+        getServer().getPluginManager().registerEvents(new DiceListener(this), this);
     }
 
     @Override
@@ -35,37 +47,42 @@ public class LudoPlugin extends JavaPlugin {
         }
     }
 
-    public void addPlayerToLobby(String playerName) {
-        if (!playersInLobby.contains(playerName)) {
-            playersInLobby.add(playerName);
+    public World createGameWorld() {
+        String worldName = "ludo_void_world_" + System.currentTimeMillis();
+        return VoidWorldGenerator.createVoidWorld(worldName);
+    }
+
+    public void startGame(GameBoardGenerator gameBoardGenerator) {
+        if (playersInGame.size() < 2) {
+            Bukkit.broadcastMessage(messageManager.get("errors.not_enough_players"));
+            return;
         }
-    }
 
-    public void removePlayerFromLobby(String playerName) {
-        playersInLobby.remove(playerName);
-    }
-
-    public boolean isGameReadyToStart() {
-        return playersInLobby.size() >= 2; // Mindestens 2 Spieler erforderlich
-    }
-
-    public List<String> getPlayersInLobby() {
-        return playersInLobby;
-    }
-
-    public void startGame() {
-        // Erstelle die Welt
+        // Erstelle die Void-Welt und das Spielfeld
         gameWorld = createGameWorld();
-
-        // Generiere das Spielfeld mit einer Animation
         gameBoardGenerator.generateLudoGameBoardWithAnimation(gameWorld, () -> {
-            Bukkit.broadcastMessage("Das Spielfeld wurde generiert! Das Spiel beginnt!");
+            Bukkit.broadcastMessage(messageManager.get("game.start"));
+
+            // Setze alle Spieler in Adventure-Modus und teleportiere sie zum Spielfeld
+            for (UUID playerId : playersInGame.keySet()) {
+                Player player = Bukkit.getPlayer(playerId);
+                if (player != null) {
+                    player.setGameMode(GameMode.ADVENTURE);
+                    player.teleport(new Location(gameWorld, 0, 64, 0)); // Spielfeld-Zentrum
+                }
+            }
+
+            gameState = new GameState(playersInGame, gameWorld);
+            gameState.startTurn();
         });
     }
 
-    public World createGameWorld() {
-        String worldName = "ludo_world_" + System.currentTimeMillis();
-        return getServer().createWorld(new org.bukkit.WorldCreator(worldName));
+    public MessageManager getMessageManager() {
+        return messageManager;
+    }
+
+    public Map<UUID, PlayerData> getPlayersInGame() {
+        return playersInGame;
     }
 
     public void unloadAndDeleteWorld(World world) {
