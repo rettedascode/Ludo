@@ -1,0 +1,10 @@
+name: Ludo
+version: '1.0-SNAPSHOT'
+main: de.rettedasplanet.ludo.LudoPlugin
+api-version: '1.21'
+authors: [ RetteDasPlanet ]
+
+commands:
+  ludo:
+    description: Startet eine neue Ludo-Runde.
+    usage: /ludo <join|leave>
