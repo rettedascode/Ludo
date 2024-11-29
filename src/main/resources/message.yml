@@ -1,0 +1,8 @@
+prefix: "&6[Ludo] "
+errors:
+  not_a_player: "Nur Spieler können diesen Befehl ausführen!"
+  not_enough_players: "Mindestens 2 Spieler sind erforderlich, um das Spiel zu starten."
+  usage: "Benutze: {usage}"
+game:
+  joined: "Du bist dem Ludo-Spiel beigetreten!"
+  start: "Das Spiel beginnt jetzt!"
