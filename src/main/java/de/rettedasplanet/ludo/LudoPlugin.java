@@ -1,6 +1,7 @@
 package de.rettedasplanet.ludo;
 
 import de.rettedasplanet.ludo.commands.LudoCommand;
+import de.rettedasplanet.ludo.game.GameBoard;
 import de.rettedasplanet.ludo.game.GameBoardGenerator;
 import de.rettedasplanet.ludo.game.GameState;
 import de.rettedasplanet.ludo.game.PlayerData;
@@ -63,7 +64,7 @@ public class LudoPlugin extends JavaPlugin {
                     player.teleport(new Location(gameWorld, 0, 64, 0));
                 }
             }
-            gameState = new GameState(playersInGame, gameWorld);
+            gameState = new GameState(playersInGame, (GameBoard) gameWorld);
             gameState.startTurn();
         });
     }
