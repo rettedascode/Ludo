@@ -1,6 +1,5 @@
 package de.rettedasplanet.ludo.game;
 
-import de.rettedasplanet.ludo.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -12,9 +11,8 @@ import java.util.UUID;
 public class GameState {
 
     private final Map<UUID, PlayerData> players;
-    private Iterator<Map.Entry<UUID, PlayerData>> turnIterator;
     private final World world;
-
+    private Iterator<Map.Entry<UUID, PlayerData>> turnIterator;
     private Map.Entry<UUID, PlayerData> currentPlayer;
 
     public GameState(Map<UUID, PlayerData> players, World world) {
@@ -24,24 +22,17 @@ public class GameState {
     }
 
     public void startTurn() {
-        if (!turnIterator.hasNext()) {
-            resetTurnIterator();
-        }
-
+        if (!turnIterator.hasNext()) turnIterator = players.entrySet().iterator();
         currentPlayer = turnIterator.next();
-        PlayerData playerData = currentPlayer.getValue();
         Player player = Bukkit.getPlayer(currentPlayer.getKey());
-
-        if (player == null) {
-            Bukkit.broadcastMessage(playerData.getName() + " ist nicht online. Überspringe den Zug.");
-            startTurn();
-            return;
-        }
-
-        Bukkit.broadcastMessage(playerData.getName() + " ist am Zug. Bitte würfle mit dem Würfelkopf!");
+        if (player != null) player.sendMessage("Du bist am Zug!");
     }
 
-    private void resetTurnIterator() {
-        turnIterator = players.entrySet().iterator();
+    public boolean isCurrentPlayer(Player player) {
+        return currentPlayer != null && currentPlayer.getKey().equals(player.getUniqueId());
+    }
+
+    public void rollDice(Player player, int diceRoll) {
+        // Spiellogik für Würfelwurf hier hinzufügen
     }
 }
