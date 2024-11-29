@@ -2,6 +2,8 @@
 
 Ein Minecraft-Plugin für das Spiel "Mensch ärgere dich nicht" (Ludo)
 
+<hr>
+
 ## Features
 
 - **Spielfeld**: Automatische Generierung eines Spielfelds in einer Void-Welt.
@@ -19,11 +21,15 @@ Ein Minecraft-Plugin für das Spiel "Mensch ärgere dich nicht" (Ludo)
 - **Nachrichten**:
     - Konfigurierbar über die Datei `message.yml`.
 
+<hr>
+
 ## Voraussetzungen
 
 - **Minecraft Server**: Version 1.21 oder höher.
 - **Java**: Version 17 oder höher.
 - **Spigot API**: Das Plugin verwendet die Spigot-API.
+
+<hr>
 
 ## Installation
 
@@ -41,6 +47,8 @@ Ein Minecraft-Plugin für das Spiel "Mensch ärgere dich nicht" (Ludo)
     - Starte deinen Server, um das Plugin zu laden.
     - Die Konfigurationsdateien (`plugin.yml`, `message.yml`) werden automatisch generiert.
 
+<hr>
+
 ## Konfiguration
 
 ### **message.yml**
@@ -55,3 +63,5 @@ errors:
 game:
   start: "Das Spiel beginnt jetzt!"
   dice_roll: "Du hast eine &6{roll} &7gewürfelt!"
+```
+<hr>
